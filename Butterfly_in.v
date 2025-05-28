@@ -16,15 +16,15 @@ module Butterfly_in (
    
    wire [1:0] sel_a_0_tmp,sel_a_1_tmp,sel_a_2_tmp,sel_a_3_tmp;
    //每个 sel_a_x 先经过一个 D 触发器，意味着输入选择是 打一拍再使用，用于对齐流水线
-   shift_2 #(.data_width(2)) shf2_sel_a_0 (.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_tmp));   
-   shift_2 #(.data_width(2)) shf2_sel_a_1 (.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_tmp)); 
-   shift_2 #(.data_width(2)) shf2_sel_a_2 (.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_tmp)); 
-   shift_2 #(.data_width(2)) shf8_sel_a_3 (.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_tmp));
+//    shift_2 #(.data_width(2)) shf2_sel_a_0 (.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_tmp));   
+//    shift_2 #(.data_width(2)) shf2_sel_a_1 (.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_tmp)); 
+//    shift_2 #(.data_width(2)) shf2_sel_a_2 (.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_tmp)); 
+//    shift_2 #(.data_width(2)) shf8_sel_a_3 (.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_tmp));
 
-//    DFF #(.data_width(2)) dff_sel0(.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_tmp));
-//    DFF #(.data_width(2)) dff_sel1(.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_tmp));
-//    DFF #(.data_width(2)) dff_sel2(.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_tmp));
-//    DFF #(.data_width(2)) dff_sel3(.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_tmp));
+   DFF #(.data_width(2)) dff_sel0(.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_tmp));
+   DFF #(.data_width(2)) dff_sel1(.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_tmp));
+   DFF #(.data_width(2)) dff_sel2(.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_tmp));
+   DFF #(.data_width(2)) dff_sel3(.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_tmp));
    
    always@(*)
    begin

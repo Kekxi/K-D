@@ -100,14 +100,11 @@ module KD_top(
              .new_address_2(bank_address_2),.new_address_3(bank_address_3)
              );   
 
-  wire clk_en;
-  assign clk_en = clk & (~sel_0 & en); //这里是不是不合适？ 时钟频率慢？
-  //gpt建议优化： 将 clk_en 改为 sel_0 == 0 && en，不要直接用 clk & ...，这在综合后可能导致门控时钟问题
 
-  shift_9 #(.data_width(7)) shf1 (.clk(clk_en),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_s));   
-  shift_9 #(.data_width(7)) shf2 (.clk(clk_en),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_s)); 
-  shift_9 #(.data_width(7)) shf3 (.clk(clk_en),.rst(rst),.data_in(bank_address_2),.data_out(bank_address_2_dy_reg_s)); 
-  shift_9 #(.data_width(7)) shf4 (.clk(clk_en),.rst(rst),.data_in(bank_address_3),.data_out(bank_address_3_dy_reg_s));     
+  shift_9 #(.data_width(7)) shf1 (.clk(clk),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_s));   
+  shift_9 #(.data_width(7)) shf2 (.clk(clk),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_s)); 
+  shift_9 #(.data_width(7)) shf3 (.clk(clk),.rst(rst),.data_in(bank_address_2),.data_out(bank_address_2_dy_reg_s)); 
+  shift_9 #(.data_width(7)) shf4 (.clk(clk),.rst(rst),.data_in(bank_address_3),.data_out(bank_address_3_dy_reg_s));     
 
   shift_12 #(.data_width(7)) shf5 (.clk(clk),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_i));   
   shift_12 #(.data_width(7)) shf6 (.clk(clk),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_i)); 

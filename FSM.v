@@ -45,15 +45,11 @@ module FSM(
   DFF #(.data_width(1)) dff_en(.clk(clk),.rst(rst),.data_in(en_reg),.data_out(en_reg_dout_tmp)); // en_reg
   DFF #(.data_width(1)) dff_ren(.clk(clk),.rst(rst),.data_in(ren_reg),.data_out(ren));
 
-//时钟分频       sel_0 = 0, clk_en = 1;clk_c = 0;
-  wire clk_en,clk_c;
-  assign clk_en = clk & (~sel_0);
-  assign clk_c = clk & (sel_0); 
   wire wen_K2,en_reg_K2,wen_K4,en_reg_K4;
-  shift_11 #(.data_width(1)) shift_8_wen_K2(.clk(clk_en),.rst(rst),.data_in(wen_reg),.data_out(wen_K2)); //radix-2 ntt 写使能
-  shift_10 #(.data_width(1)) shift_7_en_K2(.clk(clk_en),.rst(rst),.data_in(en_reg_dout_tmp),.data_out(en_reg_K2));//控制radix-2开始
-  shift_13 #(.data_width(1)) shift_14_wen_K4(.clk(clk_c),.rst(rst),.data_in(wen_reg),.data_out(wen_K4)); //radix-4 ntt 写使能 
-  shift_12 #(.data_width(1)) shift_13_en_K4(.clk(clk_c),.rst(rst),.data_in(en_reg_dout_tmp),.data_out(en_reg_K4)); //控制radix-4开始
+  shift_11 #(.data_width(1)) shift_8_wen_K2(.clk(clk),.rst(rst),.data_in(wen_reg),.data_out(wen_K2)); //radix-2 ntt 写使能
+  shift_10 #(.data_width(1)) shift_7_en_K2(.clk(clk),.rst(rst),.data_in(en_reg_dout_tmp),.data_out(en_reg_K2));//控制radix-2开始
+  shift_13 #(.data_width(1)) shift_14_wen_K4(.clk(clk),.rst(rst),.data_in(wen_reg),.data_out(wen_K4)); //radix-4 ntt 写使能 
+  shift_12 #(.data_width(1)) shift_13_en_K4(.clk(clk),.rst(rst),.data_in(en_reg_dout_tmp),.data_out(en_reg_K4)); //控制radix-4开始
 
   assign wen = (sel_0 == 0) ? wen_K2 : wen_K4; //NTT INTT 写使能
   assign en_reg_dout = (sel_0 == 0) ? en_reg_K2 : en_reg_K4;
