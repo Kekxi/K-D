@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 module D_CSA (
     input  [26:0] a,     // 27-bit input
     input  [26:0] b,     // 27-bit input
