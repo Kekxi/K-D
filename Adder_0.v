@@ -17,10 +17,10 @@ module Adder_0(
     // wire [11:0] AL_reg = Adder0_a[11:0];  //K_4_INTT:T3
     wire [11:0] AL = Adder0_a[11:0];
 
-    wire [11:0] AH_reg_shift_6,AL_reg_shift_6;
-    shift_6 #(.data_width(12)) shf6_AH_reg (.clk(clk),.rst(rst),.data_in(AH_reg),.data_out(AH_reg_shift_6)); 
+    wire [11:0] AH_reg_shift_8,AL_reg_shift_6;
+    shift_8 #(.data_width(12)) shf6_AH_reg (.clk(clk),.rst(rst),.data_in(AH_reg),.data_out(AH_reg_shift_8)); 
     // shift_6 #(.data_width(12)) shf6_AL_reg (.clk(clk),.rst(rst),.data_in(AL_reg),.data_out(AL_reg_shift_6));
-    wire [11:0] AH = (sel_a == 2'b10) ? AH_reg_shift_6 : AH_reg; //INTT shift6
+    wire [11:0] AH = (sel_a == 2'b10) ? AH_reg_shift_8 : AH_reg; //INTT shift6
     // wire [11:0] AL = (sel_a == 2'b10) ? AL_reg_shift_6 : AL_reg;
 
     parameter Kq = 3329;

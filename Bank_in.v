@@ -57,6 +57,7 @@ module Bank_in ( //从sel_a_? bank里取 new_address_?地址 ---- bank_address_�
         default:new_address_3 = b0;
       endcase
     end
+
   // reg [6:0] new_address_0_reg,new_address_1_reg,new_address_2_reg,new_address_3_reg;
   // wire [6:0] new_address_0_r,new_address_1_r,new_address_2_r,new_address_3_r;
   // assign new_address_0_r = new_address_0_reg;

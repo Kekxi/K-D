@@ -261,3 +261,62 @@ module shift_14 #(parameter data_width = 24)(  //将data_in延迟14个时钟周�
 	end
 	assign data_out = t13;
 endmodule
+
+module shift_15 #(parameter data_width = 24)(  //将data_in延迟15个时钟周期输出
+    input rst,clk,
+    input [data_width-1:0] data_in,
+	output wire [data_width-1:0] data_out
+	);
+	reg [data_width-1:0] t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14;	
+	always@(posedge clk or posedge rst)begin
+        if(rst) begin
+	    t0 <= 0; t1 <= 0; t2 <= 0; t3 <= 0; t4 <= 0; t5 <= 0; 
+        t6 <= 0; t7 <= 0; t8 <= 0; t9 <= 0; t10 <= 0; t11 <= 0; t12 <= 0; t13 <= 0; t14 <= 0;
+	    end
+	    else begin
+	    t0 <= data_in; t1 <= t0; t2 <= t1; t3 <= t2; t4 <= t3; t5 <= t4; 
+        t6 <= t5; t7 <= t6; t8 <= t7; t9 <= t8; t10 <= t9; t11 <= t10; t12 <= t11; t13 <= t12; t14 <= t13;
+	  end
+	end
+	assign data_out = t14;
+endmodule
+
+module shift_16 #(parameter data_width = 24)(  //将data_in延迟16个时钟周期输出
+    input rst,clk,
+    input [data_width-1:0] data_in,
+	output wire [data_width-1:0] data_out
+	);
+	reg [data_width-1:0] t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15;	
+	always@(posedge clk or posedge rst)begin
+        if(rst) begin
+	    t0 <= 0; t1 <= 0; t2 <= 0; t3 <= 0; t4 <= 0; t5 <= 0; 
+        t6 <= 0; t7 <= 0; t8 <= 0; t9 <= 0; t10 <= 0; t11 <= 0; t12 <= 0; t13 <= 0; t14 <= 0; t15 <= 0;
+	    end
+	    else begin
+	    t0 <= data_in; t1 <= t0; t2 <= t1; t3 <= t2; t4 <= t3; t5 <= t4; 
+        t6 <= t5; t7 <= t6; t8 <= t7; t9 <= t8; t10 <= t9; t11 <= t10; t12 <= t11; t13 <= t12; t14 <= t13; t15 <= t14;
+	  end
+	end
+	assign data_out = t15;
+endmodule
+
+module shift_17 #(parameter data_width = 24)(  //将data_in延迟16个时钟周期输出
+    input rst,clk,
+    input [data_width-1:0] data_in,
+	output wire [data_width-1:0] data_out
+	);
+	reg [data_width-1:0] t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16;	
+	always@(posedge clk or posedge rst)begin
+        if(rst) begin
+	    t0 <= 0; t1 <= 0; t2 <= 0; t3 <= 0; t4 <= 0; t5 <= 0; 
+        t6 <= 0; t7 <= 0; t8 <= 0; t9 <= 0; t10 <= 0; t11 <= 0; t12 <= 0; t13 <= 0; t14 <= 0; t15 <= 0; t16 <= 0;
+	    end
+	    else begin
+	    t0 <= data_in; t1 <= t0; t2 <= t1; t3 <= t2; t4 <= t3; t5 <= t4; 
+        t6 <= t5; t7 <= t6; t8 <= t7; t9 <= t8; t10 <= t9; t11 <= t10; t12 <= t11; t13 <= t12; t14 <= t13; t15 <= t14; t16 <= t15;
+	  end
+	end
+	assign data_out = t16;
+endmodule
+
+

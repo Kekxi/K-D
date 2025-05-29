@@ -101,15 +101,15 @@ module KD_top(
              );   
 
 
-  shift_9 #(.data_width(7)) shf1 (.clk(clk),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_s));   
-  shift_9 #(.data_width(7)) shf2 (.clk(clk),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_s)); 
-  shift_9 #(.data_width(7)) shf3 (.clk(clk),.rst(rst),.data_in(bank_address_2),.data_out(bank_address_2_dy_reg_s)); 
-  shift_9 #(.data_width(7)) shf4 (.clk(clk),.rst(rst),.data_in(bank_address_3),.data_out(bank_address_3_dy_reg_s));     
+  shift_8 #(.data_width(7)) shf1 (.clk(clk),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_s));   
+  shift_8 #(.data_width(7)) shf2 (.clk(clk),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_s)); 
+  shift_8 #(.data_width(7)) shf3 (.clk(clk),.rst(rst),.data_in(bank_address_2),.data_out(bank_address_2_dy_reg_s)); 
+  shift_8 #(.data_width(7)) shf4 (.clk(clk),.rst(rst),.data_in(bank_address_3),.data_out(bank_address_3_dy_reg_s));     
 
-  shift_12 #(.data_width(7)) shf5 (.clk(clk),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_i));   
-  shift_12 #(.data_width(7)) shf6 (.clk(clk),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_i)); 
-  shift_12 #(.data_width(7)) shf7 (.clk(clk),.rst(rst),.data_in(bank_address_2),.data_out(bank_address_2_dy_reg_i)); 
-  shift_12 #(.data_width(7)) shf8 (.clk(clk),.rst(rst),.data_in(bank_address_3),.data_out(bank_address_3_dy_reg_i));     
+  shift_16 #(.data_width(7)) shf5 (.clk(clk),.rst(rst),.data_in(bank_address_0),.data_out(bank_address_0_dy_reg_i));   
+  shift_16 #(.data_width(7)) shf6 (.clk(clk),.rst(rst),.data_in(bank_address_1),.data_out(bank_address_1_dy_reg_i)); 
+  shift_16 #(.data_width(7)) shf7 (.clk(clk),.rst(rst),.data_in(bank_address_2),.data_out(bank_address_2_dy_reg_i)); 
+  shift_16 #(.data_width(7)) shf8 (.clk(clk),.rst(rst),.data_in(bank_address_3),.data_out(bank_address_3_dy_reg_i));     
 
   assign bank_address_0_dy = sel_0 == 0 ?  bank_address_0_dy_reg_s :bank_address_0_dy_reg_i;  //根据基2或基4确定延迟多久
   assign bank_address_1_dy = sel_0 == 0 ?  bank_address_1_dy_reg_s :bank_address_1_dy_reg_i;

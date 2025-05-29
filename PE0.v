@@ -22,19 +22,23 @@ module PE0 #(parameter data_width = 24)(
     wire [data_width-1:0] PE0_out_reg;
     wire PE0_sel;
     assign PE0_sel = ~KD_mode & sel_1; //0---K_2_NTT/K_4_NTT/DNTT/DINTT  1---K_2_INTT/K_4_INTT
-    wire [data_width-1:0] mul_red0_in,mul_red0_out,adder0_in,adder0_out,w0_in,PE0_a_q1,adder0_out_q1,w0_q1,w0_q8,w0_q6,w0_q4,half_out;
+    wire [data_width-1:0] mul_red0_in,mul_red0_out,adder0_in,adder0_out,w0_in,PE0_a_q1,adder0_out_q1,w0_q1,w0_q9,w0_q6,w0_q4,half_out;
+    //----------------------------------------------------------------------------------------------------------------------------------------------------
+    //改动 PE0输出时已经DFF一次了 下一步是送入PE1计算 PE1没有必要在输入时再DFF一次吧，多余了？ 此处将所有PE1_a_q1替换PE1_a PE1_b_q1 替换PE1_b w1_q1替换w1
+    //而且PE1进来数据后再传到Adder或者mul_red中计算前，在Adder或者mul_red中也DFF了
+    // DFF #(24) dff_PE0_a(.clk(clk),.rst(rst),.data_in(PE0_a),.data_out(PE0_a_q1));
+    // DFF #(24) dff_w0(.clk(clk),.rst(rst),.data_in(w0),.data_out(w0_q1));
 
-    DFF #(24) dff_PE0_a(.clk(clk),.rst(rst),.data_in(PE0_a),.data_out(PE0_a_q1));
-    DFF #(24) dff_w0(.clk(clk),.rst(rst),.data_in(w0),.data_out(w0_q1));
     DFF #(24) dff_adder0_out(.clk(clk),.rst(rst),.data_in(adder0_out),.data_out(adder0_out_q1));
-    shift_8 #(.data_width(24)) shf8_w (.clk(clk),.rst(rst),.data_in(w0_q1),.data_out(w0_q8)); //INTT时需要移位
-    // shift_6 #(.data_width(24)) shf_w (.clk(clk),.rst(rst),.data_in(w0_q1),.data_out(w0_q6)); //INTT时需要移位
-    // shift_4 #(.data_width(24)) shf_w (.clk(clk),.rst(rst),.data_in(w0_q1),.data_out(w0_q4)); //INTT时需要移位
+    
+    shift_9 #(.data_width(24)) shf9_w (.clk(clk),.rst(rst),.data_in(w0),.data_out(w0_q9)); //INTT时需要移位
+    // shift_6 #(.data_width(24)) shf_w (.clk(clk),.rst(rst),.data_in(w0),.data_out(w0_q6)); //INTT时需要移位
+    // shift_4 #(.data_width(24)) shf_w (.clk(clk),.rst(rst),.data_in(w0),.data_out(w0_q4)); //INTT时需要移位
 
 
-    assign mul_red0_in = (PE0_sel == 1'b0) ? PE0_a_q1 : adder0_out_q1;
-    assign w0_in = (sel_1 == 1'b0) ? w0_q1 : w0_q8; //0---NTT 1---INTT
-    assign adder0_in = (PE0_sel == 1'b0) ? mul_red0_out : PE0_a_q1;
+    assign mul_red0_in = (PE0_sel == 1'b0) ? PE0_a : adder0_out_q1;
+    assign w0_in = (sel_1 == 1'b0) ? w0 : w0_q9; //0---NTT 1---INTT
+    assign adder0_in = (PE0_sel == 1'b0) ? mul_red0_out : PE0_a;
 
     wire [1:0] sel = {sel_1, sel_0 ^ sel_1};
     
@@ -56,26 +60,3 @@ module PE0 #(parameter data_width = 24)(
 
 
 endmodule
-// `timescale 1ns / 1ps
-// //PE0 先乘后加减/直出（KNTT -- 000  DNTT&DINTT -- 011），先加减后乘（KINTT -- 100） 
-// module PE0(
-//     input [23:0] PE0_a,w0,  
-//     input PE0_sel,PE0_mul_Red_mode,PE0_Adder_0_mode,
-//     output [23:0] PE0_out
-//    );
-
-//     wire [23:0] PE0_product,PE0_sum,PE0_out0,PE0_out1;
-//     // 先乘后加减/直出（KNTT -- 000  DNTT&DINTT -- 011）
-//     mul_Red_0 mul_red_0_0 (.A(PE0_a),.w(w0),.mul_Red_mode(PE0_mul_Red_mode),.result(PE0_product));
-//     Adder_0 adder0_0 (.Adder0_a(PE0_product),.Adder_0_mode(PE0_Adder_0_mode),.Adder0_sum(PE0_out0));
-//     // 先加减后乘（KINTT -- 100）
-//     Adder_0 adder0_1 (.Adder0_a(PE0_a),.Adder_0_mode(PE0_Adder_0_mode),.Adder0_sum(PE0_sum));
-//     mul_Red_0 mul_red_0_1 (.A(PE0_sum),.w(w0),.mul_Red_mode(PE0_mul_Red_mode),.result(PE0_out1));
-
-//     wire [11:0] PE0_out1_H = PE0_out1[23:12]; //a2
-//     wire [11:0] PE0_out1_L = PE0_out1[11:0];  //a3
-    
-//     assign PE0_out = (PE0_sel == 1'b0) ? PE0_out0 : PE0_out1;
-       
-    
-// endmodule

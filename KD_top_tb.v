@@ -22,9 +22,10 @@ module top_tb;
     # 7 rst = 0;
     # 2 Run_mode = 1;    //K_2_NTT
     # 315 Run_mode = 2;  //Done_K_2_NTT
-    # 140 Run_mode = 3;  //K_4_NTT
+    # 170 Run_mode = 3;  //K_4_NTT
     # 956 Run_mode = 4;  //Done_K_4_NTT
-    # 250 Run_mode = 9;  //K_4_INTT
+    // # 250 Run_mode = 9;  //K_4_INTT
+    # 170 Run_mode = 9;  //K_4_INTT
     # 956 Run_mode = 10; //Done_K_4_INTT
     # 150 Run_mode = 7;  //K_2_INTT
     # 325 Run_mode = 8;  //Done_K_2_INTT

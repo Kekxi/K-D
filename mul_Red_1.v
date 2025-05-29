@@ -12,24 +12,24 @@ module mul_Red_1 (
     // wire [11:0] w_high = w[23:12]; 
     // wire [11:0] w_low  = w[11:0];
     wire [11:0] A_high_reg = A[23:12]; 
-    wire [11:0] A_low  = A[11:0];  
+    wire [11:0] A_low = A[11:0];  
     wire [11:0] w_high_reg = w[23:12]; 
     wire [11:0] w_low_reg  = w[11:0];
 
-    wire [11:0] A_high_reg_shift_4,w_high_reg_shift_5,w_low_reg_shift_4,A_high_reg_shift_2,w_high_reg_shift_2,w_low_reg_shift_2,w_low_reg_shift_1;
-    shift_4 #(.data_width(12)) shf4_A_high_reg (.clk(clk),.rst(rst),.data_in(A_high_reg),.data_out(A_high_reg_shift_4)); 
-    shift_5 #(.data_width(12)) shf5_w_high_reg (.clk(clk),.rst(rst),.data_in(w_high_reg),.data_out(w_high_reg_shift_5));
-    shift_4 #(.data_width(12)) shf4_w_low_reg (.clk(clk),.rst(rst),.data_in(w_low_reg),.data_out(w_low_reg_shift_4));
+    wire [11:0] A_high_reg_shift_7,w_high_reg_shift_7,A_high_reg_shift_1;
+    shift_7 #(.data_width(12)) shf7_A_high_reg (.clk(clk),.rst(rst),.data_in(A_high_reg),.data_out(A_high_reg_shift_7)); 
+    shift_7 #(.data_width(12)) shf7_w_high_reg (.clk(clk),.rst(rst),.data_in(w_high_reg),.data_out(w_high_reg_shift_7));
+    // shift_1 #(.data_width(12)) shf1_w_low_reg (.clk(clk),.rst(rst),.data_in(w_low_reg),.data_out(w_low_reg_shift_1));
 
-    shift_2 #(.data_width(12)) shf2_A_high_reg (.clk(clk),.rst(rst),.data_in(A_high_reg),.data_out(A_high_reg_shift_2)); //K_4_INTT shift2
+    shift_1 #(.data_width(12)) shf_A_high_reg (.clk(clk),.rst(rst),.data_in(A_high_reg),.data_out(A_high_reg_shift_1)); //K_4_INTT shift2
     // shift_1 #(.data_width(12)) shf1_w_low_reg (.clk(clk),.rst(rst),.data_in(w_low_reg),.data_out(w_low_reg_shift_1));
     // shift_2 #(.data_width(12)) shf2_w_high_reg (.clk(clk),.rst(rst),.data_in(w_high_reg),.data_out(w_high_reg_shift_2)); //K_4_INTT shift2
     // shift_2 #(.data_width(12)) shf2_w_low_reg  (.clk(clk),.rst(rst),.data_in(w_low_reg),.data_out(w_low_reg_shift_2)); //K_4_INTT shift2
 
     //sel_a   0--K_2_NTT           1--K_4_NTT      2--K_4_INTT        3--K_2_INTT
-    wire [11:0] A_high = (sel_a == 2'b1) ? A_high_reg_shift_4 : (sel_a == 2'b10) ? A_high_reg_shift_2 : A_high_reg; //NTT shift4
-    wire [11:0] w_high = (sel_a == 2'b1) ? w_high_reg_shift_5 : w_high_reg;
-    wire [11:0] w_low = (sel_a == 2'b1) ? w_low_reg_shift_4 : w_low_reg ;
+    wire [11:0] A_high = (sel_a == 2'b1) ? A_high_reg_shift_7 : (sel_a == 2'b10) ? A_high_reg_shift_1 : A_high_reg; 
+    wire [11:0] w_high = (sel_a == 2'b1) ? w_high_reg_shift_7 : w_high_reg;
+    wire [11:0] w_low = w_low_reg;
     // wire [11:0] w_low = (sel_a == 2'b1) ? w_low_reg_shift_4 : w_low_reg ;
     
     

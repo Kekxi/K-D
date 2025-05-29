@@ -9,16 +9,16 @@ module Butterfly_out #(parameter data_width = 12)(
     wire [1:0] sel_a_0_out,sel_a_1_out,sel_a_2_out,sel_a_3_out;
     wire [1:0] sel_a_0_out_reg_s,sel_a_1_out_reg_s,sel_a_2_out_reg_s,sel_a_3_out_reg_s;
     wire [1:0] sel_a_0_out_reg_i,sel_a_1_out_reg_i,sel_a_2_out_reg_i,sel_a_3_out_reg_i;
+    // K_2_NTT 算了7个周期 加上 最开始 bf_in DFF的1个周期 所以bf_out 回写 移动8个周期！
+    shift_8 #(.data_width(2)) shif1 (.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_out_reg_s));
+    shift_8 #(.data_width(2)) shif2 (.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_out_reg_s));
+    shift_8 #(.data_width(2)) shif3 (.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_out_reg_s));
+    shift_8 #(.data_width(2)) shif4 (.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_out_reg_s));
 
-    shift_10 #(.data_width(2)) shif1 (.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_out_reg_s));
-    shift_10 #(.data_width(2)) shif2 (.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_out_reg_s));
-    shift_10 #(.data_width(2)) shif3 (.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_out_reg_s));
-    shift_10 #(.data_width(2)) shif4 (.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_out_reg_s));
-
-    shift_12 #(.data_width(2)) shif5 (.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_out_reg_i));
-    shift_12 #(.data_width(2)) shif6 (.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_out_reg_i));
-    shift_12 #(.data_width(2)) shif7 (.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_out_reg_i));
-    shift_12 #(.data_width(2)) shif8 (.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_out_reg_i));
+    shift_16 #(.data_width(2)) shif5 (.clk(clk),.rst(rst),.data_in(sel_a_0),.data_out(sel_a_0_out_reg_i));
+    shift_16 #(.data_width(2)) shif6 (.clk(clk),.rst(rst),.data_in(sel_a_1),.data_out(sel_a_1_out_reg_i));
+    shift_16 #(.data_width(2)) shif7 (.clk(clk),.rst(rst),.data_in(sel_a_2),.data_out(sel_a_2_out_reg_i));
+    shift_16 #(.data_width(2)) shif8 (.clk(clk),.rst(rst),.data_in(sel_a_3),.data_out(sel_a_3_out_reg_i));
  
     assign sel_a_0_out = sel_0 == 0 ? sel_a_0_out_reg_s :sel_a_0_out_reg_i;
     assign sel_a_1_out = sel_0 == 0 ? sel_a_1_out_reg_s :sel_a_1_out_reg_i;

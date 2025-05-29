@@ -15,12 +15,13 @@ module mul_Red_0 (
     wire [11:0] w_high_reg = w[23:12]; //K_2_NTT--w_H=1
     wire [11:0] w_low_reg  = w[11:0];  //K_2_NTT--w_L=constw=2642
 
-    wire [11:0] w_high_reg_shift_3,w_low_reg_shift_3;
-    shift_3 #(.data_width(12)) shf3_w_high_reg (.clk(clk),.rst(rst),.data_in(w_high_reg),.data_out(w_high_reg_shift_3)); 
-    shift_3 #(.data_width(12)) shf3_w_low_reg (.clk(clk),.rst(rst),.data_in(w_low_reg ),.data_out(w_low_reg_shift_3));
-    wire [11:0] w_high = (sel_a == 2'b10) ? w_high_reg_shift_3 : w_high_reg; //INTT shift6
-    wire [11:0] w_low = (sel_a == 2'b10) ? w_low_reg_shift_3 : w_low_reg;
-
+    wire [11:0] w_high_reg_shift_1,w_low_reg_shift_1;
+    shift_1 #(.data_width(12)) shf1_w_high_reg (.clk(clk),.rst(rst),.data_in(w_high_reg),.data_out(w_high_reg_shift_1)); 
+    shift_1 #(.data_width(12)) shf1_w_low_reg (.clk(clk),.rst(rst),.data_in(w_low_reg ),.data_out(w_low_reg_shift_1));
+    
+    wire [11:0] w_high = (sel_a == 2'b10) ? w_high_reg_shift_1 : w_high_reg; //  sel_a=2 INTT 
+    wire [11:0] w_low = (sel_a == 2'b10) ? w_low_reg_shift_1 : w_low_reg;
+   
     // 中间结果
     wire [23:0] product1 = A_high * w_high; // Multiply high 24 bits
     wire [23:0] product0 = A_low * w_low;   // Multiply low 24 bits

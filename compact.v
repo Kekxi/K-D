@@ -86,7 +86,7 @@ module compact_bf #(parameter data_width = 12)(
      always@(*)
      begin //6中情况 Kyber--基2NTT/INTT 基4NTT/INTT Dilithium--基2NTT/INTT 三个信号生成6个新的信号
           case ({sel_0, sel_1, KD_mode})
-              3'b000: // sel_0 = 0, sel_1 = 0, KD_mode = 0 //基2 NTT Kyber
+              3'b000: // sel_0 = 0, sel_1 = 0, KD_mode = 0 //基2 NTT Kyber------PE0 和 PE1 并行！
               begin //u0,v0,u1,v1---b0,b1,b2,b3
                   //PE0
                   PE0_in_reg <= {u0,u1}; //(F0,F2)
@@ -116,7 +116,7 @@ module compact_bf #(parameter data_width = 12)(
                   bf_1_lower_reg <= PE1_out1[11:0];   //A3 
               end
 
-              3'b100: // sel_0 = 1, sel_1 = 0, KD_mode = 0 //基4 NTT Kyber
+              3'b100: // sel_0 = 1, sel_1 = 0, KD_mode = 0 //基4 NTT Kyber-----PE0 和 PE1 非并行！
               begin //u0,v0,u1,v1---b0,b1,b2,b3
                   //PE0
                   PE0_in_reg <= {v0,v1}; //(F1,F3)

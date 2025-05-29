@@ -24,9 +24,9 @@ module Adder_1(
     assign BH_reg = Adder1_b[23:12]; //K_4_INTT--F1  K_4_NTT--F0（u0）shift_6
     assign BL = Adder1_b[11:0];
 
-    wire [11:0] BH_reg,BH_reg_shift_6;
-    shift_6 #(.data_width(12)) shf6_BH_reg (.clk(clk),.rst(rst),.data_in(BH_reg),.data_out(BH_reg_shift_6)); 
-    assign BH = (sel_1 == 1'b0 ) ? BH_reg_shift_6 : BH_reg; //INTT不移位
+    wire [11:0] BH_reg,BH_reg_shift_13;
+    shift_13 #(.data_width(12)) shf13_BH_reg (.clk(clk),.rst(rst),.data_in(BH_reg),.data_out(BH_reg_shift_13)); 
+    assign BH = (sel_1 == 1'b0 ) ? BH_reg_shift_13 : BH_reg; //INTT不移位
 
     assign {c1_1,s1_1} = AH + AL;
     assign {c4_1,s4_1} = AH - AL;
