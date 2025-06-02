@@ -102,5 +102,8 @@ module Adder_3(
         endcase
     end
    //  assign Adder3_sum_q1 = Adder3_sum_reg;
-   assign Adder3_sum = Adder3_sum_reg;
+
+   wire [23:0] Adder3_sum_reg_q;
+   DFF #(24) dff_Adder3_sum_reg_q(.clk(clk),.rst(rst),.data_in(Adder3_sum_reg),.data_out(Adder3_sum_reg_q));
+   assign Adder3_sum = Adder3_sum_reg_q;
 endmodule

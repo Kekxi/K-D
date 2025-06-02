@@ -25,11 +25,15 @@ module Adder_4(
 
     parameter Kq = 3329;
     parameter Dq = 8380417;
-    // wire [11:0] add_sum1_q1,add_sum0_q1;
+
     // wire [23:0] Adder4_sum_q1;
-    
-    // DFF dff_add_sum1(.clk(clk),.rst(rst),.data_in(add_sum1),.data_out(add_sum1_q1));
-    // DFF dff_add_sum0(.clk(clk),.rst(rst),.data_in(add_sum0),.data_out(add_sum0_q1));
+    wire [11:0] add_sum1_q1,add_sum0_q1;
+    DFF dff_add_sum1(.clk(clk),.rst(rst),.data_in(add_sum1),.data_out(add_sum1_q1));
+    DFF dff_add_sum0(.clk(clk),.rst(rst),.data_in(add_sum0),.data_out(add_sum0_q1));
+
+    wire [11:0] q_1,d2_q;
+    DFF dff_q_1(.clk(clk),.rst(rst),.data_in(q),.data_out(q_1));
+    DFF dff_d2_q(.clk(clk),.rst(rst),.data_in(d2),.data_out(d2_q));
     // DFF dff_Adder4_sum_q1(.clk(clk),.rst(rst),.data_in(Adder4_sum_q1),.data_out(Adder4_sum));
 
     wire [11:0] AH_reg_shift_6,AL_reg_shift_6;
@@ -67,8 +71,8 @@ module Adder_4(
            // B0 = {c1,s1}; // 按照有符号数看，可能为负数，直接取模不准确
            // add_sum0_B0 = B0 % Kq; // 验证
             
-           Adder4_sum_reg = {add_sum1,add_sum0};  //(A1,A3)
-          //  Adder4_sum_reg = {add_sum1_q1,add_sum0_q1};  //(A1,A3)
+          //  Adder4_sum_reg = {add_sum1,add_sum0};  //(A1,A3)
+           Adder4_sum_reg = {add_sum1_q1,add_sum0_q1};  //(A1,A3)
            // Adder4_sum_AB = {add_sum_A0,add_sum0_B0}; //验证
         end 
       //   2'b01: begin
@@ -78,7 +82,7 @@ module Adder_4(
             A = {sub_high,s2};
             {b2,d2} = A;
             q = b2 == 1 ? Dq : 0;
-            Adder4_sum_reg = d2 + q;
+            Adder4_sum_reg = d2_q + q_1;
             // Adder4_sum_AB = (Adder4_a - Adder4_b) % Dq; //验证 注意：负数模时不准确！单独验证
          end
          // 2'b10: begin
@@ -96,6 +100,13 @@ module Adder_4(
          // end
         endcase
     end
+
+
+
+    // wire [23:0] Adder4_sum_reg_q;
+    // DFF #(24) dff_Adder4_sum_reg_q(.clk(clk),.rst(rst),.data_in(Adder4_sum_reg),.data_out(Adder4_sum_reg_q));
+
     assign Adder4_sum = Adder4_sum_reg;
+    // assign Adder4_sum = Adder4_sum_reg_q;
     // assign Adder4_sum_q1 = Adder4_sum_reg;
 endmodule

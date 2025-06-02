@@ -56,14 +56,16 @@ module mul_Red_1 (
     DFF #(24) dff_product1(.clk(clk),.rst(rst),.data_in(product1),.data_out(product1_q1));
     DFF #(24) dff_product2(.clk(clk),.rst(rst),.data_in(product0),.data_out(product0_q1));
 
-    wire [47:0] data_in = {product1, product0};
+    // wire [47:0] data_in = {product1, product0};  //这是句废定义？ 根本没用到data_in
 
     // 先把data_in高位左移12bit得到data_in_H(product1),data_in低位data_in_L(product0）也提取出来,然后相加，再约减(PE1)
-    wire [47:0] data_in_H = {product1,24'b0};
-    wire [35:0] data_in_L = {product0,12'b0};
+    // wire [47:0] data_in_H = {product1,24'b0};
+    // wire [35:0] data_in_L = {product0,12'b0};
+    wire [47:0] data_in_H = {product1_q1,24'b0};
+    wire [35:0] data_in_L = {product0_q1,12'b0};
     wire[47:0] data_in_reg = data_in_H + data_in_L; //此处加完直接去模约简 相当于在乘法模块里做了模加
-    wire [47:0] data_in_reg_q1;
-    DFF #(48) dff_data_in_reg(.clk(clk),.rst(rst),.data_in(data_in_reg),.data_out(data_in_reg_q1));
+    // wire [47:0] data_in_reg_q1;
+    // DFF #(48) dff_data_in_reg(.clk(clk),.rst(rst),.data_in(data_in_reg),.data_out(data_in_reg_q1));
 
     // //测试变量
     // wire [23:0] data_in_reg_H = data_in_reg[23:12];
@@ -71,7 +73,8 @@ module mul_Red_1 (
 
     wire [22:0] mod_result0;  // 要和D_red中的result保持一致23bit
     wire [11:0] mod_result1,mod_result2;
-    D_redu d_redu (.clk(clk),.rst(rst),.data_in(data_in_reg_q1),.result(mod_result0));
+    // D_redu d_redu (.clk(clk),.rst(rst),.data_in(data_in_reg_q1),.result(mod_result0));
+    D_redu d_redu (.clk(clk),.rst(rst),.data_in(data_in_reg),.result(mod_result0));
     //Kyber  12bit低位 
     K_redu k_redu0 (.clk(clk),.rst(rst),.data_in(product0_q1),.result(mod_result1));
     //Kyber  12bit高位    

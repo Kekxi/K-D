@@ -31,13 +31,14 @@ module mul_Red_0 (
     DFF #(24) dff_product2(.clk(clk),.rst(rst),.data_in(product0),.data_out(product0_q1));
 
     // 乘完的结果拼接
-    wire [47:0] data_in = {product1, product0};
+    // wire [47:0] data_in = {product1, product0};
+    wire [47:0] data_in = {product1_q1, product0_q1};
     wire [47:0] data_in_reg_q1;
     // 先把data_in高位左移12bit得到data_in_H(product1),data_in低位data_in_L(product0）也提取出来,然后相加，再约减(PE0)
     wire [35:0] data_in_H = {data_in[47:24],12'b0};
     wire [23:0] data_in_L = data_in[23:0];
     wire[47:0] data_in_reg = data_in_H + data_in_L; //D_2_NTT:F3·ωH·2^12 + F3·ωL (26bit+24bit 存到 48bit 约简成 24bit)
-    DFF #(48) dff_data_in_reg(.clk(clk),.rst(rst),.data_in(data_in_reg),.data_out(data_in_reg_q1));
+    // DFF #(48) dff_data_in_reg(.clk(clk),.rst(rst),.data_in(data_in_reg),.data_out(data_in_reg_q1));
 
     //测试变量
     wire [23:0] data_in_reg_H = data_in_reg[23:12];
@@ -47,7 +48,8 @@ module mul_Red_0 (
     // 模块实例化 必须在编译时确定，不是运行时;综合器通常能识别这种结构并自动优化未用路径,不会有额外资源浪费
     wire [22:0] mod_result0,mod_result0_q1;  // D_redu 的结果
     wire [11:0] mod_result1, mod_result2,mod_result1_q1,mod_result2_q1; // K_redu 的结果
-    D_redu d_redu (.clk(clk),.rst(rst),.data_in(data_in_reg_q1), .result(mod_result0));
+    D_redu d_redu (.clk(clk),.rst(rst),.data_in(data_in_reg), .result(mod_result0));
+    // D_redu d_redu (.clk(clk),.rst(rst),.data_in(data_in_reg_q1), .result(mod_result0));
     K_redu k_redu0 (.clk(clk),.rst(rst),.data_in(product0_q1), .result(mod_result1));
     K_redu k_redu1 (.clk(clk),.rst(rst),.data_in(product1_q1), .result(mod_result2));
 
