@@ -32,20 +32,22 @@ module K_redu (
   
   wire [16:0] sum0_reg,carry0_reg,sum1_reg,carry1_reg,sum2_reg,carry2_reg,sum3_reg,carry3_reg,sum4_reg,sum4_reg_1,carry4_reg,sum5_reg,carry5_reg,sum6_reg,carry6_reg;
   DFF #(17) dff_m0 (.clk(clk),.rst(rst),.data_in(sum0),.data_out(sum0_reg));
-  DFF #(17) dff_m1 (.clk(clk),.rst(rst),.data_in(sum1),.data_out(sum1_reg));
-  DFF #(17) dff_m2 (.clk(clk),.rst(rst),.data_in(sum2),.data_out(sum2_reg));
-  DFF #(17) dff_m3 (.clk(clk),.rst(rst),.data_in(sum3),.data_out(sum3_reg));
-  DFF #(17) dff_m4 (.clk(clk),.rst(rst),.data_in(sum4),.data_out(sum4_reg));
-  // DFF #(17) dff_m4_1 (.clk(clk),.rst(rst),.data_in(sum4_reg),.data_out(sum4_reg_1));
-  DFF #(17) dff_m5 (.clk(clk),.rst(rst),.data_in(sum5),.data_out(sum5_reg));
-  DFF #(17) dff_m6 (.clk(clk),.rst(rst),.data_in(sum6),.data_out(sum6_reg));
- 
   DFF #(17) dff_carry0 (.clk(clk),.rst(rst),.data_in(carry0),.data_out(carry0_reg));
+  DFF #(17) dff_m1 (.clk(clk),.rst(rst),.data_in(sum1),.data_out(sum1_reg));
   DFF #(17) dff_carry1 (.clk(clk),.rst(rst),.data_in(carry1),.data_out(carry1_reg));
+  DFF #(17) dff_m2 (.clk(clk),.rst(rst),.data_in(sum2),.data_out(sum2_reg));
   DFF #(17) dff_carry2 (.clk(clk),.rst(rst),.data_in(carry2),.data_out(carry2_reg));
+
+  DFF #(17) dff_m3 (.clk(clk),.rst(rst),.data_in(sum3),.data_out(sum3_reg));
   DFF #(17) dff_carry3 (.clk(clk),.rst(rst),.data_in(carry3),.data_out(carry3_reg));
+  DFF #(17) dff_m4 (.clk(clk),.rst(rst),.data_in(sum4),.data_out(sum4_reg));
   DFF #(17) dff_carry4 (.clk(clk),.rst(rst),.data_in(carry4),.data_out(carry4_reg));
-  DFF #(17) dff_carry5 (.clk(clk),.rst(rst),.data_in(carry5),.data_out(carry5_reg));
+
+  // DFF #(17) dff_m4_1 (.clk(clk),.rst(rst),.data_in(sum4_reg),.data_out(sum4_reg_1));
+  // DFF #(17) dff_m5 (.clk(clk),.rst(rst),.data_in(sum5),.data_out(sum5_reg)); //改动过 注释掉了
+  // DFF #(17) dff_carry5 (.clk(clk),.rst(rst),.data_in(carry5),.data_out(carry5_reg)); //改动过  注释掉了
+
+  DFF #(17) dff_m6 (.clk(clk),.rst(rst),.data_in(sum6),.data_out(sum6_reg));
   DFF #(17) dff_carry6 (.clk(clk),.rst(rst),.data_in(carry6),.data_out(carry6_reg));
  
 
@@ -58,7 +60,7 @@ module K_redu (
 
   K_CSA csa5 (.clk(clk),.rst(rst),.a(carry3_shift), .b(sum3_reg), .c(carry4_shift), .sum(sum5), .carry(carry5));   //2
 
-  // K_CSA csa6 (.clk(clk),.rst(rst),.a(carry5_shift), .b(sum5_reg), .c(sum4_reg_1), .sum(sum6), .carry(carry6));   //3
+  // K_CSA csa6 (.clk(clk),.rst(rst),.a(carry5_shift), .b(sum5_reg), .c(sum4_reg_1), .sum(sum6), .carry(carry6));//3
   K_CSA csa6 (.clk(clk),.rst(rst),.a(carry5_shift), .b(sum5), .c(sum4_reg), .sum(sum6), .carry(carry6));   //2
   
   //改过

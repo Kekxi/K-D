@@ -6,7 +6,8 @@ module Adder_3(
     input [23:0] Adder3_b,  // 24-bit input b
    //  input [1:0] Adder_3_mode,
     input  Adder_3_mode,
-    input [1:0] sel_a,
+    input sel_a,
+    input sel_D_2_NTT,
     output [23:0] Adder3_sum
    );
     reg c1,c2,c3,c4,b1,b2,b3,sel;
@@ -27,18 +28,29 @@ module Adder_3(
    //  DFF #(12) dff_sub_sum0(.clk(clk),.rst(rst),.data_in(sub_sum0),.data_out(sub_sum0_q1));
    //  DFF #(24) dff_Adder3_sum_q1(.clk(clk),.rst(rst),.data_in(Adder3_sum_q1),.data_out(Adder3_sum));
 
-    wire [11:0] BH_reg_shift_7,BL_reg_shift_7;
-    wire [11:0] BH_reg = Adder3_b[23:12]; //D时 F2
-    wire [11:0] BL_reg = Adder3_b[11:0];  //D时 F3
+    //tb
+    wire [11:0] Adder3_a_H = Adder3_a[23:12];
+    wire [11:0] Adder3_a_L = Adder3_a[11:0];
+
+    wire [11:0] BH_reg_shift_7,BL_reg_shift_7,AH_reg_shift_6,AL_reg_shift_6;
+    wire [11:0] BH_reg = Adder3_b[23:12]; 
+    wire [11:0] BL_reg = Adder3_b[11:0];
+    wire [11:0] AH_reg = Adder3_a[23:12]; 
+    wire [11:0] AL_reg = Adder3_a[11:0];
+
     // K_4_NTT 
     shift_7 #(.data_width(12)) shf7_BH_reg (.clk(clk),.rst(rst),.data_in(BH_reg),.data_out(BH_reg_shift_7));
     shift_7 #(.data_width(12)) shf7_BL_reg (.clk(clk),.rst(rst),.data_in(BL_reg),.data_out(BL_reg_shift_7));
+    //D_2_NTT
+    shift_6 #(.data_width(12)) shf6_AH_reg (.clk(clk),.rst(rst),.data_in(AH_reg),.data_out(AH_reg_shift_6));
+    shift_6 #(.data_width(12)) shf6_AL_reg (.clk(clk),.rst(rst),.data_in(AL_reg),.data_out(AL_reg_shift_6));
+
 
 
     always @(*) begin
 
-      AH = Adder3_a[23:12]; //D时 F0
-      AL = Adder3_a[11:0];  //D时 F1
+      AH = (sel_D_2_NTT == 1'b1) ? AH_reg_shift_6 : AH_reg; //D时 F0
+      AL = (sel_D_2_NTT == 1'b1) ? AL_reg_shift_6 : AL_reg;  //D时 F1
       BH = (sel_a == 1'b1) ? BH_reg_shift_7 : BH_reg;
       BL = (sel_a == 1'b1) ? BL_reg_shift_7 : BL_reg;
 

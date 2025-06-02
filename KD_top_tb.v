@@ -15,30 +15,30 @@ module top_tb;
   
   initial 
   begin
-    //kyber
-    Run_mode = 0; //IDLE
-    KD_mode =0;
-    rst = 1;
-    # 7 rst = 0;
-    # 2 Run_mode = 1;    //K_2_NTT
-    # 315 Run_mode = 2;  //Done_K_2_NTT
-    # 170 Run_mode = 3;  //K_4_NTT
-    # 956 Run_mode = 4;  //Done_K_4_NTT
-    // # 250 Run_mode = 9;  //K_4_INTT
-    # 170 Run_mode = 9;  //K_4_INTT
-    # 956 Run_mode = 10; //Done_K_4_INTT
-    # 150 Run_mode = 7;  //K_2_INTT
-    # 325 Run_mode = 8;  //Done_K_2_INTT
-
-    // //Dilithium
+    // //kyber
     // Run_mode = 0; //IDLE
-    // KD_mode =1;
+    // KD_mode =0;
     // rst = 1;
     // # 7 rst = 0;
-    // # 2 Run_mode = 5;      // D_2_NTT
-    // # 10243 Run_mode = 6;  // Done_D_2_NTT  1283*8=10264
-    // # 3520 Run_mode = 11;  // D_2_INTT
-    // # 10243 Run_mode = 12; // Done_D_2_INTT
+    // # 2 Run_mode = 1;    //K_2_NTT
+    // # 315 Run_mode = 2;  //Done_K_2_NTT
+    // # 170 Run_mode = 3;  //K_4_NTT
+    // # 956 Run_mode = 4;  //Done_K_4_NTT
+    // // # 250 Run_mode = 9;  //K_4_INTT
+    // # 170 Run_mode = 9;  //K_4_INTT
+    // # 956 Run_mode = 10; //Done_K_4_INTT
+    // # 150 Run_mode = 7;  //K_2_INTT
+    // # 325 Run_mode = 8;  //Done_K_2_INTT
+
+    //Dilithium
+    Run_mode = 0; //IDLE
+    KD_mode =1;
+    rst = 1;
+    # 7 rst = 0;
+    # 2 Run_mode = 5;      // D_2_NTT
+    # 10243 Run_mode = 6;  // Done_D_2_NTT  1283*8=10264
+    # 3520 Run_mode = 11;  // D_2_INTT
+    # 10243 Run_mode = 12; // Done_D_2_INTT
 
   end
   
@@ -51,16 +51,16 @@ KD_top tb_top(
 
   initial
   begin 
-    // //Kyber--32*4
-     $readmemb("D:/ntt/wangdi_code/KaLi_core/bank0.txt",top_tb.tb_top.bank_0.bank);
-     $readmemb("D:/ntt/wangdi_code/KaLi_core/bank1.txt",top_tb.tb_top.bank_1.bank);
-     $readmemb("D:/ntt/wangdi_code/KaLi_core/bank2.txt",top_tb.tb_top.bank_2.bank);
-     $readmemb("D:/ntt/wangdi_code/KaLi_core/bank3.txt",top_tb.tb_top.bank_3.bank);
-    // //Dilithium--128*4
-    //  $readmemb("D:/KaLi_core/bank4.txt",top_tb.tb_top.bank_0.bank);
-    //  $readmemb("D:/KaLi_core/bank5.txt",top_tb.tb_top.bank_1.bank);
-    //  $readmemb("D:/KaLi_core/bank6.txt",top_tb.tb_top.bank_2.bank);
-    //  $readmemb("D:/KaLi_core/bank7.txt",top_tb.tb_top.bank_3.bank);
+    // // //Kyber--32*4
+    //  $readmemb("D:/KaLi_core/bank0.txt",top_tb.tb_top.bank_0.bank);
+    //  $readmemb("D:/KaLi_core/bank1.txt",top_tb.tb_top.bank_1.bank);
+    //  $readmemb("D:/KaLi_core/bank2.txt",top_tb.tb_top.bank_2.bank);
+    //  $readmemb("D:/KaLi_core/bank3.txt",top_tb.tb_top.bank_3.bank);
+    //Dilithium--128*4
+     $readmemb("D:/KaLi_core/bank4.txt",top_tb.tb_top.bank_0.bank);
+     $readmemb("D:/KaLi_core/bank5.txt",top_tb.tb_top.bank_1.bank);
+     $readmemb("D:/KaLi_core/bank6.txt",top_tb.tb_top.bank_2.bank);
+     $readmemb("D:/KaLi_core/bank7.txt",top_tb.tb_top.bank_3.bank);
 
   end
 

@@ -158,6 +158,7 @@ module compact_bf #(parameter data_width = 12)(
                   PE2_b1_in_reg <= 24'b0;//24'b0
                   //PE2_out3 = (T0,T1) = (F0+F2,F0-F2)*(1/2)
                   //PE2_out4 = 24'b0
+                  
                   //T0 = PE2_out3[23:12]
                   //T1 = PE2_out3[11:0]
    

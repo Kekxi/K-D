@@ -21,35 +21,31 @@ module D_redu (
   assign temp4 = data_in[45:43]<<13;
   assign temp5 = 27'b111011111111101111111111011;
   
-  assign carry0_shift = {carry0,1'b0};
-  assign carry1_shift = {carry1,1'b0};
+  assign carry0_shift = {carry0_q1,1'b0};
+  assign carry1_shift = {carry1_q1,1'b0};
   assign carry2_shift = {carry2,1'b0};
-  
-  DFF #(27) dff_temp0(.clk(clk),.rst(rst),.data_in(temp0),.data_out(temp0_q1));
-  DFF #(27) dff_temp1(.clk(clk),.rst(rst),.data_in(temp1),.data_out(temp1_q1));
-  DFF #(27) dff_temp2(.clk(clk),.rst(rst),.data_in(temp2),.data_out(temp2_q1));
-  DFF #(27) dff_temp3(.clk(clk),.rst(rst),.data_in(temp3),.data_out(temp3_q1));
-  DFF #(27) dff_temp4(.clk(clk),.rst(rst),.data_in(temp4),.data_out(temp4_q1));
-  DFF #(27) dff_temp5(.clk(clk),.rst(rst),.data_in(temp5),.data_out(temp5_q1));
+
   DFF #(27) dff_sum0(.clk(clk),.rst(rst),.data_in(sum0),.data_out(sum0_q1));
   DFF #(27) dff_sum1(.clk(clk),.rst(rst),.data_in(sum1),.data_out(sum1_q1));
-  DFF #(27) dff_sum2(.clk(clk),.rst(rst),.data_in(sum2),.data_out(sum2_q1));
-  DFF #(27) dff_sum3(.clk(clk),.rst(rst),.data_in(sum3),.data_out(sum3_q1));
   DFF #(27) dff_carry0(.clk(clk),.rst(rst),.data_in(carry0),.data_out(carry0_q1));
   DFF #(27) dff_carry1(.clk(clk),.rst(rst),.data_in(carry1),.data_out(carry1_q1));
-  DFF #(27) dff_carry2(.clk(clk),.rst(rst),.data_in(carry2),.data_out(carry2_q1));
+
+  // DFF #(27) dff_sum2(.clk(clk),.rst(rst),.data_in(sum2),.data_out(sum2_q1));
+  // DFF #(27) dff_carry2(.clk(clk),.rst(rst),.data_in(carry2),.data_out(carry2_q1));
+
+  DFF #(27) dff_sum3(.clk(clk),.rst(rst),.data_in(sum3),.data_out(sum3_q1));
   DFF #(27) dff_carry3(.clk(clk),.rst(rst),.data_in(carry3),.data_out(carry3_q1));
-  DFF #(27) dff_carry0_shift(.clk(clk),.rst(rst),.data_in(carry0_shift),.data_out(carry0_shift_q1));
-  DFF #(27) dff_carry1_shift(.clk(clk),.rst(rst),.data_in(carry1_shift),.data_out(carry1_shift_q1));
-  DFF #(27) dff_carry2_shift(.clk(clk),.rst(rst),.data_in(carry2_shift),.data_out(carry2_shift_q1));
+
   
   
-  D_CSA csa0 (.a(temp0_q1), .b(temp1_q1), .c(temp2_q1), .sum(sum0_q1), .carry(carry0_q1));
-  D_CSA csa1 (.a(temp3_q1), .b(temp4_q1), .c(temp5_q1), .sum(sum1_q1), .carry(carry1_q1)); 
-  D_CSA csa2 (.a(sum0_q1), .b(carry0_shift_q1), .c(sum1_q1), .sum(sum2_q1), .carry(carry2_q1));
-  D_CSA csa3 (.a(sum2_q1), .b(carry2_shift_q1), .c(carry1_shift_q1), .sum(sum3_q1), .carry(carry3_q1));
+  D_CSA csa0 (.a(temp0), .b(temp1), .c(temp2), .sum(sum0), .carry(carry0)); //0
+  D_CSA csa1 (.a(temp3), .b(temp4), .c(temp5), .sum(sum1), .carry(carry1)); 
+
+  D_CSA csa2 (.a(sum0_q1), .b(carry0_shift), .c(sum1_q1), .sum(sum2), .carry(carry2)); //1
+  D_CSA csa3 (.a(sum2), .b(carry2_shift), .c(carry1_shift), .sum(sum3), .carry(carry3));
+
   
-  assign mod_sum = (carry3_q1 << 1) + sum3;
+  assign mod_sum = (carry3_q1 << 1) + sum3_q1;
   assign mod_result = (mod_sum >= Dq) ? 
                      ((mod_sum - Dq >= Dq) ? (mod_sum - 2*Dq) : (mod_sum - Dq)) : 
                      ((mod_sum < 0) ? (mod_sum + Dq) : mod_sum);

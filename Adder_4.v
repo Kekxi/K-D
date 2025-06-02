@@ -6,6 +6,7 @@ module Adder_4(
     input [23:0] Adder4_b,  
    //  input [1:0] Adder_4_mode, 
     input Adder_4_mode,
+    input sel_D_2_NTT,
     output [23:0] Adder4_sum
    );
     
@@ -31,10 +32,17 @@ module Adder_4(
     // DFF dff_add_sum0(.clk(clk),.rst(rst),.data_in(add_sum0),.data_out(add_sum0_q1));
     // DFF dff_Adder4_sum_q1(.clk(clk),.rst(rst),.data_in(Adder4_sum_q1),.data_out(Adder4_sum));
 
+    wire [11:0] AH_reg_shift_6,AL_reg_shift_6;
+    wire [11:0] AH_reg = Adder4_a[23:12]; 
+    wire [11:0] AL_reg = Adder4_a[11:0];
+    //D_2_NTT
+    shift_6 #(.data_width(12)) shf6_AH_reg (.clk(clk),.rst(rst),.data_in(AH_reg),.data_out(AH_reg_shift_6));
+    shift_6 #(.data_width(12)) shf6_AL_reg (.clk(clk),.rst(rst),.data_in(AL_reg),.data_out(AL_reg_shift_6));
+
     always @(*) begin
 
-      AH = Adder4_a[23:12]; //0
-      AL = Adder4_a[11:0];  //2
+      AH = (sel_D_2_NTT == 1'b1) ? AH_reg_shift_6 : AH_reg; //0
+      AL = (sel_D_2_NTT == 1'b1) ? AL_reg_shift_6 : AL_reg; //2
       BH = Adder4_b[23:12];  //1
       BL = Adder4_b[11:0];  //3
 

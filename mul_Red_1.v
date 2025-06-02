@@ -4,7 +4,7 @@ module mul_Red_1 (
     input [23:0] A,         // K_4_INTT: P0 = (F1-F3,T0-T2)
     input [23:0] w,         // K_4_INTT:(687,w2)
     input mul_Red_mode,             // K_redu--0  D_redu--1
-    input [1:0] sel_a,               //用于选择shift_4
+    input [1:0] sel_a,               
     output [23:0] result    //D_2_NTT: F2·ωH·2^24 + F2·ωL·2^12
 );
     // wire [11:0] A_high = A[23:12]; 
@@ -51,21 +51,23 @@ module mul_Red_1 (
 
     wire [23:0] product1 = A_high * w_high;
     wire [23:0] product0 = A_low * w_low;  
-    // wire [23:0] product1 = A_high * w_high;
-    // wire [23:0] product0 = A_low * w_low; 
-    wire [23:0] product1_q1,product0_q1;
-      
+    
+    wire [23:0] product1_q1,product0_q1;  
     DFF #(24) dff_product1(.clk(clk),.rst(rst),.data_in(product1),.data_out(product1_q1));
     DFF #(24) dff_product2(.clk(clk),.rst(rst),.data_in(product0),.data_out(product0_q1));
 
-    wire [47:0] data_in = {product1_q1, product0_q1};
+    wire [47:0] data_in = {product1, product0};
 
     // 先把data_in高位左移12bit得到data_in_H(product1),data_in低位data_in_L(product0）也提取出来,然后相加，再约减(PE1)
-    wire [47:0] data_in_H = {data_in[47:24],24'b0};
-    wire [35:0] data_in_L = {data_in[23:0],12'b0};
-    wire[47:0] data_in_reg = data_in_H + data_in_L;
+    wire [47:0] data_in_H = {product1,24'b0};
+    wire [35:0] data_in_L = {product0,12'b0};
+    wire[47:0] data_in_reg = data_in_H + data_in_L; //此处加完直接去模约简 相当于在乘法模块里做了模加
     wire [47:0] data_in_reg_q1;
     DFF #(48) dff_data_in_reg(.clk(clk),.rst(rst),.data_in(data_in_reg),.data_out(data_in_reg_q1));
+
+    // //测试变量
+    // wire [23:0] data_in_reg_H = data_in_reg[23:12];
+    // wire [23:0] data_in_reg_L = data_in_reg[11:0];
 
     wire [22:0] mod_result0;  // 要和D_red中的result保持一致23bit
     wire [11:0] mod_result1,mod_result2;
@@ -82,6 +84,10 @@ module mul_Red_1 (
     DFF #(12) dff_k_redu1(.clk(clk),.rst(rst),.data_in(mod_result2),.data_out(mod_result2_q1));
 
     assign result = (mul_Red_mode == 1'b1) ? {1'b0,mod_result0_q1} : {mod_result2_q1,mod_result1_q1}; 
+
+    //测试变量
+    wire [11:0] mod_result0_q1_H = result[23:12];
+    wire [11:0] mod_result0_q1_L = result[11:0];
    
 endmodule
 
