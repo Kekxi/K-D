@@ -24,7 +24,6 @@ module D_redu (
   assign carry0_shift = {carry0_q1,1'b0};
   assign carry1_shift = {carry1_q1,1'b0};
   assign carry2_shift = {carry2,1'b0};
-  // assign carry2_shift = {carry2_q1,1'b0};
 
   DFF #(27) dff_sum0(.clk(clk),.rst(rst),.data_in(sum0),.data_out(sum0_q1));
   DFF #(27) dff_sum1(.clk(clk),.rst(rst),.data_in(sum1),.data_out(sum1_q1));
@@ -46,10 +45,10 @@ module D_redu (
   D_CSA csa3 (.a(sum2), .b(carry2_shift), .c(carry1_shift), .sum(sum3), .carry(carry3));
 
   
-  // assign mod_sum = (carry3_q1 << 1) + sum3_q1;
-  wire signed [26:0] mod_sum_reg;
-  assign mod_sum_reg = (carry3_q1 << 1) + sum3_q1;
+  wire signed [26:0] mod_sum_reg = (carry3_q1 << 1) + sum3_q1;
   DFF #(27) dff_mod_sum_reg (.clk(clk),.rst(rst),.data_in(mod_sum_reg),.data_out(mod_sum));
+
+  // assign mod_sum = (carry3_q1 << 1) + sum3_q1;
   assign mod_result = (mod_sum >= Dq) ? 
                      ((mod_sum - Dq >= Dq) ? (mod_sum - 2*Dq) : (mod_sum - Dq)) : 
                      ((mod_sum < 0) ? (mod_sum + Dq) : mod_sum);

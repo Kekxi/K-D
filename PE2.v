@@ -29,8 +29,10 @@ module PE2(
     // DFF #(24) dff_PE2_b1(.clk(clk),.rst(rst),.data_in(PE2_b1),.data_out(PE2_b1_q1));
 
     // wire [1:0] sel = {sel_1, sel_0 ^ sel_1};
-    wire sel = sel_0 & ~KD_mode & ~sel_1; // 改过 没验证 需验证  1--K_4_NTT 0--其他
+    wire sel = sel_0 & ~KD_mode & ~sel_1; // 改过 没验证 需验证  1--K_4_NTT 0--其他 
     wire sel_D_2_NTT = ~sel_0 & KD_mode & ~sel_1; //1--D_2_NTT 0--其他
+    wire sel_D_2_INTT = ~sel_0 & KD_mode & sel_1; //1--D_2_INTT 0--其他
+
 
     Adder_3 adder3_0 (.clk(clk),.rst(rst),.Adder3_a(PE2_a0),.Adder3_b(PE2_b0),.Adder_3_mode(KD_mode),.sel_a(sel),.sel_D_2_NTT(sel_D_2_NTT),.Adder3_sum(adder3_0_out));  
     Adder_4 adder4_0 (.clk(clk),.rst(rst),.Adder4_a(PE2_a1),.Adder4_b(PE2_b1),.Adder_4_mode(KD_mode),.sel_D_2_NTT(sel_D_2_NTT),.Adder4_sum(adder4_0_out));  
@@ -44,7 +46,12 @@ module PE2(
     modular_half #(.data_width(24)) half3 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(adder3_0_out_reg),.y_half(half_out3)); //INTT时用到 注意位宽！
     // modular_half #(.data_width(24)) half4 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(adder4_0_out_reg),.y_half(half_out4)); //INTT时用到 但全为0输入 没有用
     //只有INTT时才需要*(1/2) 结果输出需要选择！
-    assign PE2_out3 = (sel_1 == 1'b0) ? adder3_0_out_reg : half_out3;
+
+    wire [23:0] half_out3_shift_6;
+    shift_6 #(.data_width(24)) shf6_half_out3 (.clk(clk),.rst(rst),.data_in(half_out3),.data_out(half_out3_shift_6)); 
+    wire [23:0] half_out3_reg = (sel_D_2_INTT == 1'b1) ? half_out3_shift_6 : half_out3;
+
+    assign PE2_out3 = (sel_1 == 1'b0) ? adder3_0_out_reg : half_out3_reg;
     //K_4_INTT:half_out3 = {T0,T1} = {(F0+F2)*(1/2),(F0-F2)*(1/2)} 
     //D_2_INTT:(F0,F1)+(F2,F3)*(1/2) 此处是最终结果，需要*(1/2)
     assign PE2_out4 = adder4_0_out_reg; 
@@ -55,8 +62,8 @@ module PE2(
     assign PE2_out3_L = PE2_out3[11:0];
     assign PE2_out4_H = PE2_out4[23:12];
     assign PE2_out4_L = PE2_out4[11:0];
-    wire [11:0] half_out3_H = half_out3[23:12];
-    wire [11:0] half_out3_L = half_out3[11:0];
+    wire [11:0] half_out3_H = half_out3_reg[23:12];
+    wire [11:0] half_out3_L = half_out3_reg[11:0];
     // wire [11:0] half_out4_H = half_out4[23:12];
     // wire [11:0] half_out4_L = half_out4[11:0];
 

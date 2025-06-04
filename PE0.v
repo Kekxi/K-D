@@ -37,9 +37,11 @@ module PE0 #(parameter data_width = 24)(
     assign w0_in = (sel_1 == 1'b0) ? w0 : (sel_0 == 1'b0) ? w0_q2 : w0_q9; //0---NTT 1---INTT  K_4INTT shift9 K_2_INTT shift2
     assign adder0_in = (PE0_sel == 1'b0) ? mul_red0_out : PE0_a;
 
-    wire [1:0] sel = {sel_1, sel_0 ^ sel_1};
+    wire [1:0] sel = {sel_1, sel_0 ^ sel_1}; 
+    // wire sel = sel_0 & ~KD_mode & ~sel_1; // 改过 没验证 需验证  1--K_4_NTT 0--其他
+    wire sel_D_2_INTT = ~sel_0 & KD_mode & sel_1; //1---D_2_INTT 0--其他
     
-    mul_Red_0 mul_red0 (.clk(clk),.rst(rst),.A(mul_red0_in),.w(w0_in),.sel_a(sel),.mul_Red_mode(KD_mode),.result(mul_red0_out));
+    mul_Red_0 mul_red0 (.clk(clk),.rst(rst),.A(mul_red0_in),.w(w0_in),.sel_a(sel),.sel_D_2_INTT(sel_D_2_INTT),.mul_Red_mode(KD_mode),.result(mul_red0_out));
     Adder_0 adder0 (.clk(clk),.rst(rst),.Adder0_a(adder0_in),.sel_a(sel),.Adder_0_mode(KD_mode),.Adder0_sum(adder0_out));
     modular_half #(.data_width(24)) half0 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(mul_red0_out),.y_half(half_out)); //INTT时能用到 注意位宽！
 

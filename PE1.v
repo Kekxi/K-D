@@ -17,7 +17,7 @@ module PE1(
     //K_4_INTT:PE1_out1=(T3,a2)*(1/2)={(F1-F3)*687,(T0-T2)*w2}*(1/2)       PE1_out2=(a0,T2)*(1/2)=(T0+T2,F1+F3)*(1/2)
     //K_2_INTT:PE1_out1 = {(F1+F3)*1*(1/2),(F1-F3)*constω^(-1)*(1/2)}
     //D_2_NTT:PE1_out1 = P0 + F2·ωH·2^24 + F2·ωL·2^12 = Q0 
-    //D_2_INTT:PE1_out1 = P0 + rH·ωH·2^24 + rL·ωH·2^12 = Q0 
+    //D_2_INTT:PE1_out1 = (P0 + rH·ωH·2^24 + rL·ωH·2^120*(1/2) = Q0 
    );
     wire [23:0] PE1_a,PE1_b_q1,w1_q,w1_q1,w1_q2,PE1_a_0,PE1_a_1,P,P1,P0,mul_red1_out;
     wire [23:0] mul_red1_in,adder1_a_in,adder1_b_in,adder2_a_in,adder2_b_in,w1_in,adder0_in,PE1_out1_reg;
@@ -26,7 +26,9 @@ module PE1(
     wire PE1_sel = ~KD_mode & sel_1; //0---K_2_NTT/K_4_NTT/DNTT/DINTT  1---K_2_INTT/K_4_INTT 
     wire [1:0] Adder1_2_mode = KD_mode ? 2 : sel_0; // 2 --- Dilithium 0/1---Kyber
     wire [1:0] Adder1_1_mode = KD_mode ? 2 : sel_1; // K_2_NTT/K_4_NTT --- 0 K_2_INTT/K_4_INTT --- 1 D_2_NTT/D_2_INTT --- 2 最新改动！
-    wire [1:0] sel = {sel_1, sel_0 ^ sel_1};  // 2---KINTT
+    wire [1:0] sel = (KD_mode & sel_1) | (sel_0 & sel_1) ? 2'd2 : (sel_0 & ~sel_1) ? 2'd1 : 2'd0; //1--K_4_NTT   2--K_4_INTT/D_2_INTT    0--K_2_NTT/K_2_INTT/D_2_NTT 
+    wire sel_K_4_NTT = sel_0 & ~KD_mode & ~sel_1;
+    wire sel_D_2_INTT = ~sel_0 & KD_mode & sel_1;
 
     // PE1_sel = 1 时的拼接操作 
     assign PE1_a_0 = (sel_0 == 1'b1) ? {PE1_a[11:0],PE1_a[11:0]} : {PE1_a[23:12],PE1_a[11:0]}; //1---(F3,F3) 0---(F1,F3)
@@ -44,7 +46,7 @@ module PE1(
     assign adder2_b_in = (PE1_sel == 1'b0) ? mul_red1_out : P;
     assign w1_in = (sel_1 == 1'b0) ? w1 : w1_q2; //0---NTT 1---INTT 
 
-    mul_Red_1 mul_red1 (.clk(clk),.rst(rst),.A(mul_red1_in),.w(w1_in),.mul_Red_mode(KD_mode),.sel_a(sel),.result(mul_red1_out)); 
+    mul_Red_1 mul_red1 (.clk(clk),.rst(rst),.A(mul_red1_in),.w(w1_in),.mul_Red_mode(KD_mode),.sel_a(sel),.sel_D_2_INTT(sel_D_2_INTT),.sel_K_4_NTT(sel_K_4_NTT),.result(mul_red1_out)); 
     modular_half #(.data_width(24)) half1 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(mul_red1_out),.y_half(half_out1)); //INTT时能用到 注意位宽！
 
     wire [11:0] P_H = P[23:12];
@@ -56,7 +58,7 @@ module PE1(
     assign P1 = (sel == 2'b10)  ? {P1_H,P1_L_shift_1} : {P1_H,P1_L}; //K_4_INTT:{(T0 + T2),(F1 + F3)} 作为PE1的1个输出--{a0,T2}
     modular_half #(.data_width(24)) half2 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(P1),.y_half(half_out2)); //K_4_INTT时能用到 注意位宽！
 
-    Adder_1 adder1 (.clk(clk),.rst(rst),.Adder1_a(adder1_a_in),.Adder1_b(adder1_b_in),.Adder1_mode1(Adder1_1_mode),.Adder1_mode2(Adder1_2_mode),.Adder1_sum(adder1_out)); 
+    Adder_1 adder1 (.clk(clk),.rst(rst),.Adder1_a(adder1_a_in),.Adder1_b(adder1_b_in),.KD_mode(KD_mode),.Adder1_mode1(Adder1_1_mode),.Adder1_mode2(Adder1_2_mode),.Adder1_sum(adder1_out)); 
     modular_half #(.data_width(24)) half_DINTT (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(adder1_out),.y_half(half_out_DINTT)); //DINTT 特殊处理
 
     Adder_2 adder2 (.clk(clk),.rst(rst),.Adder2_a(adder2_a_in),.Adder2_b(adder2_b_in),.Adder_2_mode(Adder1_2_mode),.sel_a(sel),.Adder2_sum(adder2_out));
@@ -68,7 +70,7 @@ module PE1(
     // DFF #(24) dff_half_out1(.clk(clk),.rst(rst),.data_in(half_out1),.data_out(half_out1_q1)); //加上它和4_NTT周期就不匹配了！
 
     shift_13 #(24) shift13_half_out2(.clk(clk),.rst(rst),.data_in(half_out2),.data_out(half_out2_q13));
-    DFF #(24) dff_half_out_DINTT(.clk(clk),.rst(rst),.data_in(half_out_DINTT),.data_out(half_out_DINTT_q1));
+    // DFF #(24) dff_half_out_DINTT(.clk(clk),.rst(rst),.data_in(half_out_DINTT),.data_out(half_out_DINTT_q1));
    
   
    wire [11:0] half_out1_H = half_out1[23:12];
@@ -78,7 +80,7 @@ module PE1(
    wire [23:0] half_out1_reg = (sel_0 == 1'b1) ? {half_out1_H,half_out1_L_q7} : {half_out1_H,half_out1}; 
    //K_2 时，只有adder1_out_q1算出来的是有效值，送回bank的值 adder2_out_q1算的结果无效
     assign PE1_out1_reg = (PE1_sel == 1'b0) ? adder1_out_q1 : half_out1_reg;
-    assign PE1_out1 = (KD_mode & sel_1) ? half_out_DINTT_q1 : PE1_out1_reg;
+    assign PE1_out1 = (KD_mode & sel_1) ? half_out_DINTT : PE1_out1_reg;
     assign PE1_out2 = (PE1_sel == 1'b0) ? adder2_out_q1 : half_out2_q13;
 
     wire [11:0] PE1_out1_H,PE1_out1_L,PE1_out2_H,PE1_out2_L;
