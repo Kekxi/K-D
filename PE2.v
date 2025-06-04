@@ -29,13 +29,13 @@ module PE2(
     // DFF #(24) dff_PE2_b1(.clk(clk),.rst(rst),.data_in(PE2_b1),.data_out(PE2_b1_q1));
 
     // wire [1:0] sel = {sel_1, sel_0 ^ sel_1};
-    wire sel = sel_0 & ~KD_mode & ~sel_1; // 改过 没验证 需验证  1--K_4_NTT 0--其他 
+    wire sel_K_4_NTT = sel_0 & ~KD_mode & ~sel_1; //1--K_4_NTT 0--其他 
     wire sel_D_2_NTT = ~sel_0 & KD_mode & ~sel_1; //1--D_2_NTT 0--其他
     wire sel_D_2_INTT = ~sel_0 & KD_mode & sel_1; //1--D_2_INTT 0--其他
 
 
-    Adder_3 adder3_0 (.clk(clk),.rst(rst),.Adder3_a(PE2_a0),.Adder3_b(PE2_b0),.Adder_3_mode(KD_mode),.sel_a(sel),.sel_D_2_NTT(sel_D_2_NTT),.Adder3_sum(adder3_0_out));  
-    Adder_4 adder4_0 (.clk(clk),.rst(rst),.Adder4_a(PE2_a1),.Adder4_b(PE2_b1),.Adder_4_mode(KD_mode),.sel_D_2_NTT(sel_D_2_NTT),.Adder4_sum(adder4_0_out));  
+    Adder_2 adder3_0 (.clk(clk),.rst(rst),.Adder2_a(PE2_a0),.Adder2_b(PE2_b0),.KD_mode(KD_mode),.sel_K_4_NTT(sel_K_4_NTT),.sel_D_2_NTT(sel_D_2_NTT),.sel(1),.Adder2_sum(adder3_0_out));  
+    Adder_2 adder4_0 (.clk(clk),.rst(rst),.Adder2_a(PE2_a1),.Adder2_b(PE2_b1),.KD_mode(KD_mode),.sel_K_4_NTT(sel_K_4_NTT),.sel_D_2_NTT(sel_D_2_NTT),.sel(0),.Adder2_sum(adder4_0_out));  
 
     wire [23:0] adder3_0_out_reg,adder4_0_out_reg;
     DFF #(24) dff_adder3_0_out(.clk(clk),.rst(rst),.data_in(adder3_0_out),.data_out(adder3_0_out_reg));

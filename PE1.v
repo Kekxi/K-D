@@ -26,7 +26,9 @@ module PE1(
     wire PE1_sel = ~KD_mode & sel_1; //0---K_2_NTT/K_4_NTT/DNTT/DINTT  1---K_2_INTT/K_4_INTT 
     wire [1:0] Adder1_2_mode = KD_mode ? 2 : sel_0; // 2 --- Dilithium 0/1---Kyber
     wire [1:0] Adder1_1_mode = KD_mode ? 2 : sel_1; // K_2_NTT/K_4_NTT --- 0 K_2_INTT/K_4_INTT --- 1 D_2_NTT/D_2_INTT --- 2 最新改动！
-    wire [1:0] sel = (KD_mode & sel_1) | (sel_0 & sel_1) ? 2'd2 : (sel_0 & ~sel_1) ? 2'd1 : 2'd0; //1--K_4_NTT   2--K_4_INTT/D_2_INTT    0--K_2_NTT/K_2_INTT/D_2_NTT 
+    
+    wire [1:0] sel_PE0 = {sel_1, sel_0 ^ sel_1};
+    wire [1:0] sel_PE1 = (KD_mode & sel_1) | (sel_0 & sel_1) ? 2'd2 : (sel_0 & ~sel_1) ? 2'd1 : 2'd0; //1--K_4_NTT   2--K_4_INTT/D_2_INTT    0--K_2_NTT/K_2_INTT/D_2_NTT 
     wire sel_K_4_NTT = sel_0 & ~KD_mode & ~sel_1;
     wire sel_D_2_INTT = ~sel_0 & KD_mode & sel_1;
 
@@ -45,8 +47,8 @@ module PE1(
     assign adder2_a_in = PE1_b; 
     assign adder2_b_in = (PE1_sel == 1'b0) ? mul_red1_out : P;
     assign w1_in = (sel_1 == 1'b0) ? w1 : w1_q2; //0---NTT 1---INTT 
-
-    mul_Red_1 mul_red1 (.clk(clk),.rst(rst),.A(mul_red1_in),.w(w1_in),.mul_Red_mode(KD_mode),.sel_a(sel),.sel_D_2_INTT(sel_D_2_INTT),.sel_K_4_NTT(sel_K_4_NTT),.result(mul_red1_out)); 
+    
+    mul_Red_0 mul_red1 (.clk(clk),.rst(rst),.A(mul_red1_in),.w(w1_in),.sel_PE0(sel_PE0),.sel_PE1(sel_PE1),.sel_D_2_INTT(sel_D_2_INTT),.sel_K_4_NTT(sel_K_4_NTT),.mul_Red_mode(KD_mode),.PE_sel(1),.result(mul_red1_out)); 
     modular_half #(.data_width(24)) half1 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(mul_red1_out),.y_half(half_out1)); //INTT时能用到 注意位宽！
 
     wire [11:0] P_H = P[23:12];
@@ -55,13 +57,13 @@ module PE1(
     wire [11:0] P1_L = adder1_out_q1[11:0];
     wire [11:0] P1_L_shift_1,half_out2_H_shift_8,half_out1_L_shift_6;
     shift_1 #(.data_width(12)) shf1_P1_L (.clk(clk),.rst(rst),.data_in(P1_L),.data_out(P1_L_shift_1)); //K_4_INTT时需要移位
-    assign P1 = (sel == 2'b10)  ? {P1_H,P1_L_shift_1} : {P1_H,P1_L}; //K_4_INTT:{(T0 + T2),(F1 + F3)} 作为PE1的1个输出--{a0,T2}
+    assign P1 = (sel_PE1 == 2'b10)  ? {P1_H,P1_L_shift_1} : {P1_H,P1_L}; //K_4_INTT:{(T0 + T2),(F1 + F3)} 作为PE1的1个输出--{a0,T2}
     modular_half #(.data_width(24)) half2 (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(P1),.y_half(half_out2)); //K_4_INTT时能用到 注意位宽！
 
-    Adder_1 adder1 (.clk(clk),.rst(rst),.Adder1_a(adder1_a_in),.Adder1_b(adder1_b_in),.KD_mode(KD_mode),.Adder1_mode1(Adder1_1_mode),.Adder1_mode2(Adder1_2_mode),.Adder1_sum(adder1_out)); 
+    Adder_1 adder1 (.clk(clk),.rst(rst),.Adder1_a(adder1_a_in),.Adder1_b(adder1_b_in),.KD_mode(KD_mode),.Adder1_mode1(Adder1_1_mode),.Adder1_mode2(Adder1_2_mode),.sel_PE1(sel_PE1),.PE_sel(1),.Adder1_sum(adder1_out)); 
     modular_half #(.data_width(24)) half_DINTT (.clk(clk),.rst(rst),.KD_mode(KD_mode),.x_half(adder1_out),.y_half(half_out_DINTT)); //DINTT 特殊处理
 
-    Adder_2 adder2 (.clk(clk),.rst(rst),.Adder2_a(adder2_a_in),.Adder2_b(adder2_b_in),.Adder_2_mode(Adder1_2_mode),.sel_a(sel),.Adder2_sum(adder2_out));
+    Adder_1 adder2 (.clk(clk),.rst(rst),.Adder1_a(adder2_a_in),.Adder1_b(adder2_b_in),.KD_mode(KD_mode),.Adder1_mode1(Adder1_1_mode),.Adder_2_mode(Adder1_2_mode),.sel_PE1(sel_PE1),.PE_sel(0),.Adder1_sum(adder2_out));
 
     wire [23:0] adder1_out_q1,adder1_out,adder2_out,adder2_out_q1,half_out1,half_out1_q1,half_out2,half_out2_q13,half_out_DINTT,half_out_DINTT_q1;
 
